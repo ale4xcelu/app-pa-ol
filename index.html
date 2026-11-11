@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="es"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwNjAxMTEzMDE2MDA4MDQ4NDAyMSIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2JiMTYwN2JkNDdmM2E0ZWVfcGFub2xfY29udHJvbF9wcm8uaHRtbC0xNzkifSwiZXhwIjoxNzk0NDA4OTM0LCJpYXQiOjE3OTQ0MDUzMzQsImFsZyI6IlJTMjU2In0.Xy_gMk5GYXiYESVHnP7HHFN-ZIgQyrdiBh8TpMAOoemfUXQaIxnmuTp9Dmq8-sTJyHkGZDaJ2mj0tytF7xvH7Qa9cOC1gygjER9dn2SxULv40kMTAGfky8eCl9mHpQMh7GQWvSG8FLyCZ2IUSY3MGyNW8bXIaqFi-XepnZ1C-OJOo51g8BYdoKddFccFY6L0VTX_a8og6eRKfhZjKj1V8UWFZKjjrtppwT62oeqkdkVPFa3Q9_1e04NcuwNYpVBzxzq0L9ThHHuzhtUYpEU9aJcYUXlabapM3BTtltyjcPuDikop0DEbNRFDATbAHGR-2AzBY_3V3dOsJQqM56AgbA","c_bb1607bd47f3a4ee_panol_control_pro.html-179")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pañol Control Pro - Control de Pañol e Inventario</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-4{bottom:1rem}.left-3{left:0.75rem}.right-3{right:0.75rem}.right-4{right:1rem}.top-0{top:0px}.top-2\.5{top:0.625rem}.top-3{top:0.75rem}.z-30{z-index:30}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-5{margin-bottom:1.25rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-4{height:1rem}.max-h-32{max-height:8rem}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-full{width:100%}.w-16{width:4rem}.w-4{width:1rem}.w-fit{width:-moz-fit-content;width:fit-content}.min-w-\[140px\]{min-width:140px}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-y-2{--tw-translate-y:0.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-y-2{row-gap:0.5rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.375rem * var(--tw-space-x-reverse));margin-left:calc(0.375rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-3\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.875rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.875rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(226 232 240 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-t{border-top-width:1px}.border-brand-600{--tw-border-opacity:1;border-color:rgb(2 132 199 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-transparent{border-color:transparent}.border-rose-200{--tw-border-opacity:1;border-color:rgb(254 205 211 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-brand-600{--tw-bg-opacity:1;background-color:rgb(2 132 199 / var(--tw-bg-opacity, 1))}.bg-brand-700{--tw-bg-opacity:1;background-color:rgb(3 105 161 / var(--tw-bg-opacity, 1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-emerald-700{--tw-bg-opacity:1;background-color:rgb(4 120 87 / var(--tw-bg-opacity, 1))}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/90{background-color:rgb(30 41 59 / 0.9)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-slate-900\/80{background-color:rgb(15 23 42 / 0.8)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-emerald-800{--tw-bg-opacity:1;background-color:rgb(6 95 70 / var(--tw-bg-opacity, 1))}.bg-rose-100{--tw-bg-opacity:1;background-color:rgb(255 228 230 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-600{--tw-gradient-from:#9333ea var(--tw-gradient-from-position);--tw-gradient-to:rgb(147 51 234 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-rose-500{--tw-gradient-from:#f43f5e var(--tw-gradient-from-position);--tw-gradient-to:rgb(244 63 94 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-sky-500{--tw-gradient-from:#0ea5e9 var(--tw-gradient-from-position);--tw-gradient-to:rgb(14 165 233 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-900{--tw-gradient-from:#0f172a var(--tw-gradient-from-position);--tw-gradient-to:rgb(15 23 42 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-violet-600{--tw-gradient-from:#7c3aed var(--tw-gradient-from-position);--tw-gradient-to:rgb(124 58 237 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-pink-600{--tw-gradient-to:#db2777 var(--tw-gradient-to-position)}.to-slate-800{--tw-gradient-to:#1e293b var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-8{padding-left:2rem}.pr-3{padding-right:0.75rem}.pt-3{padding-top:0.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-sans{font-family:Inter, sans-serif}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.text-brand-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-brand-600{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.text-brand-700{--tw-text-opacity:1;color:rgb(3 105 161 / var(--tw-text-opacity, 1))}.text-emerald-100{--tw-text-opacity:1;color:rgb(209 250 229 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.text-rose-800{--tw-text-opacity:1;color:rgb(159 18 57 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-brand-50:hover{--tw-bg-opacity:1;background-color:rgb(240 249 255 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:from-emerald-600:hover{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-purple-700:hover{--tw-gradient-from:#7e22ce var(--tw-gradient-from-position);--tw-gradient-to:rgb(126 34 206 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-rose-600:hover{--tw-gradient-from:#e11d48 var(--tw-gradient-from-position);--tw-gradient-to:rgb(225 29 72 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-sky-600:hover{--tw-gradient-from:#0284c7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(2 132 199 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-violet-700:hover{--tw-gradient-from:#6d28d9 var(--tw-gradient-from-position);--tw-gradient-to:rgb(109 40 217 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-indigo-700:hover{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.hover\:to-pink-700:hover{--tw-gradient-to:#be185d var(--tw-gradient-to-position)}.hover\:to-teal-700:hover{--tw-gradient-to:#0f766e var(--tw-gradient-to-position)}.hover\:text-brand-600:hover{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.hover\:text-rose-600:hover{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.hover\:text-slate-900:hover{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-brand-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(2 132 199 / var(--tw-ring-opacity, 1))}.focus\:ring-emerald-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(16 185 129 / var(--tw-ring-opacity, 1))}.focus\:ring-rose-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(244 63 94 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:inline{display:inline}.sm\:w-auto{width:auto}.sm\:flex-none{flex:none}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.sm\:space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.sm\:p-5{padding:1.25rem}.sm\:px-4{padding-left:1rem;padding-right:1rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:py-6{padding-top:1.5rem;padding-bottom:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-xs{font-size:0.75rem;line-height:1rem}}@media (min-width: 768px){.md\:col-span-2{grid-column:span 2 / span 2}.md\:inline{display:inline}.md\:w-auto{width:auto}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-start{align-items:flex-start}}@media (min-width: 1024px){.lg\:inline{display:inline}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-600 p-2 rounded-lg text-white shadow-inner">
+                        <i class="fa-solid fa-boxes-stacked text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base sm:text-lg leading-tight tracking-tight">Pañol Control Pro</h1>
+                        <p class="text-[10px] sm:text-xs text-slate-400">Equipos &amp; Consumibles (Cloud Sync)</p>
+                    </div>
+                </div>
+
+                <!-- Global Actions -->
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    <button onclick="openStockEntryModal()" title="Ingresar/Cargar stock" class="px-3 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-1.5">
+                        <i class="fa-solid fa-square-plus text-sm"></i>
+                        <span class="hidden sm:inline">Agregar Stock</span>
+                    </button>
+
+                    <button onclick="downloadStandaloneHTML()" title="Guardar aplicación completa en tu dispositivo" class="px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-1.5">
+                        <i class="fa-solid fa-download text-sm"></i>
+                        <span class="hidden sm:inline">Descargar App</span>
+                    </button>
+
+                    <button onclick="exportJSONBackup()" title="Descargar copia de datos JSON" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 border border-slate-700 shadow-md flex items-center space-x-1">
+                        <i class="fa-solid fa-file-export text-sky-400"></i>
+                        <span class="hidden md:inline">Respaldar</span>
+                    </button>
+                    
+                    <button onclick="document.getElementById('importFileInput').click()" title="Cargar copia de datos JSON" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 border border-slate-700 shadow-md flex items-center space-x-1">
+                        <i class="fa-solid fa-file-import text-emerald-400"></i>
+                        <span class="hidden md:inline">Restaurar</span>
+                    </button>
+                    <input type="file" id="importFileInput" class="hidden" accept=".json" onchange="importJSONBackup(event)">
+
+                    <button onclick="exportCSVReport()" title="Exportar para Excel" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 border border-slate-700 shadow-md flex items-center space-x-1">
+                        <i class="fa-solid fa-file-csv text-emerald-500"></i>
+                        <span class="hidden lg:inline">CSV</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full">
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-300 mb-5 space-x-2 sm:space-x-4 overflow-x-auto">
+            <button id="tab-search-btn" onclick="switchTab('search')" class="tab-btn whitespace-nowrap px-3 sm:px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 flex items-center space-x-2 transition border-brand-600 text-brand-600">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Buscador Inteligente</span>
+            </button>
+            <button id="tab-consumables-btn" onclick="switchTab('consumables')" class="tab-btn whitespace-nowrap px-3 sm:px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 hover:text-slate-900 flex items-center space-x-2 transition border-transparent text-slate-600">
+                <i class="fa-solid fa-box-archive"></i>
+                <span>Inventario Consumibles</span>
+                <span id="low-stock-badge" class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">2</span>
+            </button>
+            <button id="tab-equipments-btn" onclick="switchTab('equipments')" class="tab-btn whitespace-nowrap px-3 sm:px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 hover:text-slate-900 flex items-center space-x-2 transition border-transparent text-slate-600">
+                <i class="fa-solid fa-industry"></i>
+                <span>Equipos Registrados</span>
+            </button>
+        </div>
+
+        <!-- Notification Toast Container -->
+        <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2"></div>
+
+        <!-- SECTION 1: SEARCH & SMART LOOKUP -->
+        <section id="tab-search" class="tab-content space-y-5">
+            <!-- Search Control Panel -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders text-brand-600"></i>
+                        <span>Búsqueda Rápida de Pañol</span>
+                    </h2>
+                    
+                    <!-- Search Mode Selector Toggle -->
+                    <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs w-full sm:w-auto">
+                        <button id="mode-eq-btn" onclick="setSearchMode('equipment')" class="flex-1 sm:flex-none px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow-sm transition">
+                            Por Equipo
+                        </button>
+                        <button id="mode-cs-btn" onclick="setSearchMode('consumable')" class="flex-1 sm:flex-none px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition">
+                            Por Consumible / Filtro
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mode 1: Search by Equipment -->
+                <div id="search-by-equipment-container" class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                                Seleccionar o Buscar Equipo / Modelo
+                            </label>
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                                <input type="text" id="search-equipment-input" oninput="filterEquipmentOptions()" placeholder="Tipeá equipo o marca (ej: ASK 40, Kaeser)..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none mb-1">
+                                <select id="search-equipment-select" onchange="performSmartSearch()" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"><option value="">-- Todos los Equipos --</option><option value="eq_1">ASK 40 (KAESER)</option><option value="eq_2">ASK 35 (KAESER)</option><option value="eq_3">SK 19 (KAESER)</option></select>
+                            </div>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="resetSmartSearch()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg transition flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span>Limpiar Filtros</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode 2: Search by Consumable/Filter -->
+                <div id="search-by-consumable-container" class="space-y-3 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Tipo de Consumible</label>
+                            <select id="search-consumable-type" onchange="performSmartSearch()" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">Todos los tipos</option>
+                                <option value="Filtro de Aceite">Filtro de Aceite</option>
+                                <option value="Filtro de Aire">Filtro de Aire</option>
+                                <option value="Filtro Coalescente">Filtro Coalescente</option>
+                                <option value="Filtro Separador">Filtro Separador</option>
+                                <option value="Aceite / Lubricante">Aceite / Lubricante</option>
+                                <option value="Correa">Correa</option>
+                                <option value="Empaque / Sello">Empaque / Sello</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Buscar por Código / Nombre / Proveedor</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                                <input type="text" id="search-consumable-text" oninput="performSmartSearch()" placeholder="Escribí código o marca..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Selected Summary Card -->
+            <div id="selected-equipment-card" class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-4 sm:p-5 shadow-md hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span id="card-eq-brand" class="bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Marca</span>
+                            <span id="card-eq-category" class="bg-slate-700 text-slate-300 text-[10px] font-medium px-2 py-0.5 rounded-full">Categoría</span>
+                        </div>
+                        <h3 id="card-eq-name" class="text-base sm:text-lg font-bold mt-1">Nombre Equipo</h3>
+                        <p id="card-eq-desc" class="text-slate-300 text-xs mt-0.5">Descripción</p>
+                    </div>
+                    <div class="bg-slate-800/90 p-3 rounded-lg border border-slate-700 text-right min-w-[140px]">
+                        <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Consumibles Asignados</span>
+                        <span id="card-eq-count" class="text-xl sm:text-2xl font-black text-brand-400">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reverse Lookup Card: Compatible Equipments for a Selected Consumable -->
+            <div id="selected-consumable-lookup-card" class="hidden bg-slate-800 text-white rounded-xl p-4 sm:p-5 shadow-md border border-slate-700">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">REPUESTO SELECCIONADO</span>
+                            <span id="lookup-cs-type" class="bg-slate-700 text-slate-300 text-[10px] font-medium px-2 py-0.5 rounded-full">Tipo</span>
+                            <span id="lookup-cs-supplier" class="bg-brand-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Proveedor</span>
+                        </div>
+                        <h3 id="lookup-cs-name" class="text-base sm:text-lg font-bold text-white">Nombre Filtro</h3>
+                        <p id="lookup-cs-stock" class="text-xs text-emerald-400 font-semibold">Stock Actual: 0 unidades</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700 w-full md:w-auto">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center space-x-1">
+                            <i class="fa-solid fa-link text-brand-400"></i>
+                            <span>Equipos que utilizan este repuesto:</span>
+                        </h4>
+                        <ul id="lookup-cs-equipments-list" class="text-xs space-y-1 text-slate-200 font-medium"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Grid / Table for Consumables -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-boxes-stacked text-slate-500"></i>
+                            <span>Consumibles Encontrados</span>
+                        </h3>
+                        <span id="search-results-count" class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-semibold">2 ítems</span>
+                    </div>
+
+                    <!-- Batch Descount Actions -->
+                    <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+                        <button onclick="toggleSelectAll(true)" class="text-xs text-slate-600 hover:text-brand-600 underline font-medium px-1.5 py-0.5">
+                            <i class="fa-regular fa-square-check mr-1"></i>Todos
+                        </button>
+                        <button onclick="toggleSelectAll(false)" class="text-xs text-slate-600 hover:text-rose-600 underline font-medium px-1.5 py-0.5">
+                            <i class="fa-regular fa-square mr-1"></i>Ninguno
+                        </button>
+                        <button onclick="applyBatchStockDeduction()" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-minus-circle"></i>
+                            <span>Descontar Selección</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-500 text-[11px] uppercase font-bold tracking-wider border-b border-slate-200">
+                                <th class="py-2.5 px-3 text-center w-10">
+                                    <i class="fa-solid fa-check text-slate-400"></i>
+                                </th>
+                                <th class="py-2.5 px-3">Consumible / Código</th>
+                                <th class="py-2.5 px-3">Proveedor</th>
+                                <th class="py-2.5 px-3">Tipo</th>
+                                <th class="py-2.5 px-3">Stock</th>
+                                <th class="py-2.5 px-3">Estado</th>
+                                <th class="py-2.5 px-3 text-center">Cant. Descontar</th>
+                                <th class="py-2.5 px-3 text-center">Ver Equipos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="smart-search-table-body" class="divide-y divide-slate-200 text-xs sm:text-sm"><tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="checkbox" class="smart-item-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4" data-id="cs_1">
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-slate-800">W940/37</div>
+                        <div class="text-[11px] text-slate-400">Sin ubicación </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-700 font-semibold">
+                        <span class="bg-slate-100 px-2 py-0.5 rounded text-xs border border-slate-200">MANN</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-600 font-medium">Filtro de Aceite</td>
+                    <td class="py-2.5 px-3">
+                        <span class="font-extrabold text-sm text-rose-600">0</span>
+                    </td>
+                    <td class="py-2.5 px-3"><span class="bg-rose-100 text-rose-800 font-bold text-[11px] px-2 py-0.5 rounded-full border border-rose-200 flex items-center w-fit space-x-1"><i class="fa-solid fa-triangle-exclamation"></i><span>Bajo Stock</span></span></td>
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="number" min="1" max="0" value="1" id="deduct-qty-cs_1" class="w-16 text-center border border-slate-300 rounded-md py-1 text-xs font-semibold focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button onclick="showCompatibleEquipmentsModal('cs_1')" title="ASK 40" class="text-slate-500 hover:text-brand-600 text-xs font-medium bg-slate-100 hover:bg-brand-50 px-2 py-1 rounded border border-slate-200 transition">
+                            <i class="fa-solid fa-eye mr-1"></i>1 Equipos
+                        </button>
+                    </td>
+                </tr><tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="checkbox" class="smart-item-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4" data-id="cs_2">
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-slate-800">6.3463.0</div>
+                        <div class="text-[11px] text-slate-400">TGR </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-700 font-semibold">
+                        <span class="bg-slate-100 px-2 py-0.5 rounded text-xs border border-slate-200">TRC</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-600 font-medium">Filtro de Aceite</td>
+                    <td class="py-2.5 px-3">
+                        <span class="font-extrabold text-sm text-rose-600">0</span>
+                    </td>
+                    <td class="py-2.5 px-3"><span class="bg-rose-100 text-rose-800 font-bold text-[11px] px-2 py-0.5 rounded-full border border-rose-200 flex items-center w-fit space-x-1"><i class="fa-solid fa-triangle-exclamation"></i><span>Bajo Stock</span></span></td>
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="number" min="1" max="0" value="1" id="deduct-qty-cs_2" class="w-16 text-center border border-slate-300 rounded-md py-1 text-xs font-semibold focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button onclick="showCompatibleEquipmentsModal('cs_2')" title="ASK 40" class="text-slate-500 hover:text-brand-600 text-xs font-medium bg-slate-100 hover:bg-brand-50 px-2 py-1 rounded border border-slate-200 transition">
+                            <i class="fa-solid fa-eye mr-1"></i>1 Equipos
+                        </button>
+                    </td>
+                </tr></tbody>
+                    </table>
+                </div>
+                <div id="smart-search-empty" class="p-8 text-center text-slate-500 hidden">
+                    <i class="fa-solid fa-box-open text-3xl text-slate-300 mb-2"></i>
+                    <p class="text-xs sm:text-sm">No se encontraron consumibles con los criterios seleccionados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: CONSUMABLES INVENTORY -->
+        <section id="tab-consumables" class="tab-content space-y-5 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Catálogo General de Consumibles</h2>
+                    <p class="text-xs text-slate-500">Gestión completa de repuestos, proveedores, stock mínimo y ubicaciones.</p>
+                </div>
+                <button onclick="openConsumableModal()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-1.5 text-xs sm:text-sm">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Nuevo Consumible</span>
+                </button>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Buscar Código / Nombre</label>
+                    <input type="text" id="filter-consumable-text" oninput="renderConsumablesTable()" placeholder="Ej: LF-9009..." class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Filtrar por Proveedor</label>
+                    <input type="text" id="filter-consumable-supplier" oninput="renderConsumablesTable()" placeholder="Ej: Mann-Filter..." class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Filtrar por Tipo</label>
+                    <select id="filter-consumable-type" onchange="renderConsumablesTable()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="">Todos los tipos</option>
+                        <option value="Filtro de Aceite">Filtro de Aceite</option>
+                        <option value="Filtro de Aire">Filtro de Aire</option>
+                        <option value="Filtro Coalescente">Filtro Coalescente</option>
+                        <option value="Filtro Separador">Filtro Separador</option>
+                        <option value="Aceite / Lubricante">Aceite / Lubricante</option>
+                        <option value="Correa">Correa</option>
+                        <option value="Empaque / Sello">Empaque / Sello</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Estado de Stock</label>
+                    <select id="filter-consumable-stock" onchange="renderConsumablesTable()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="">Todos los estados</option>
+                        <option value="low">Solo Stock Bajo / Alerta</option>
+                        <option value="ok">Stock Normal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Consumables Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase font-semibold tracking-wider border-b border-slate-200">
+                                <th class="py-3 px-3">Código / Nombre</th>
+                                <th class="py-3 px-3">Proveedor</th>
+                                <th class="py-3 px-3">Tipo</th>
+                                <th class="py-3 px-3">Equipos Compatibles</th>
+                                <th class="py-3 px-3">Stock</th>
+                                <th class="py-3 px-3">Mínimo</th>
+                                <th class="py-3 px-3">Estado</th>
+                                <th class="py-3 px-3 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consumables-table-body" class="divide-y divide-slate-200 text-xs sm:text-sm"></tbody>
+                    </table>
+                </div>
+                <div id="consumables-empty" class="p-8 text-center text-slate-500 hidden">
+                    <i class="fa-solid fa-boxes-packing text-3xl text-slate-300 mb-2"></i>
+                    <p class="text-xs sm:text-sm">No se encontraron consumibles cargados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: EQUIPMENTS MANAGEMENT -->
+        <section id="tab-equipments" class="tab-content space-y-5 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Catálogo de Equipos y Modelos</h2>
+                    <p class="text-xs text-slate-500">Registro de máquinas, compresores o flota vehicular de la planta.</p>
+                </div>
+                <button onclick="openEquipmentModal()" class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-1.5 text-xs sm:text-sm">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Nuevo Equipo</span>
+                </button>
+            </div>
+
+            <!-- Equipments Grid -->
+            <div id="equipments-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            
+            <div id="equipments-empty" class="bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500 hidden">
+                <i class="fa-solid fa-industry text-3xl text-slate-300 mb-2"></i>
+                <p class="text-xs sm:text-sm">No hay equipos registrados todavía.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-[11px] text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>Sistema Pañol Master - Sincronizado en la nube (Firebase Cloud Firestore)</span>
+            <button onclick="resetToDefaultData()" class="text-slate-400 hover:text-rose-600 underline transition">Restablecer Datos de Demostración</button>
+        </div>
+    </footer>
+
+    <!-- MODAL: ADD STOCK -->
+    <div id="stock-entry-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden my-6 border border-slate-200">
+            <div class="bg-emerald-700 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-boxes-packing text-lg"></i>
+                    <h3 class="font-bold text-base">Entrada de Stock (Agregar)</h3>
+                </div>
+                <button onclick="closeStockEntryModal()" class="text-emerald-100 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form onsubmit="submitStockEntry(event)" class="p-5 space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        1. Filtrar por Tipo de Repuesto
+                    </label>
+                    <select id="stock-entry-type-filter" onchange="filterStockEntryDropdown()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="">-- Todos los tipos --</option>
+                        <option value="Filtro de Aceite">Filtro de Aceite</option>
+                        <option value="Filtro de Aire">Filtro de Aire</option>
+                        <option value="Filtro Coalescente">Filtro Coalescente</option>
+                        <option value="Filtro Separador">Filtro Separador</option>
+                        <option value="Aceite / Lubricante">Aceite / Lubricante</option>
+                        <option value="Correa">Correa</option>
+                        <option value="Empaque / Sello">Empaque / Sello</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        2. Buscar y Seleccionar Repuesto
+                    </label>
+                    <div class="relative mb-1.5">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="stock-entry-search-input" oninput="filterStockEntryDropdown()" placeholder="Escribí para buscar..." class="w-full pl-8 pr-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <select id="stock-entry-item-select" required="" size="4" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        3. Cantidad a Sumar *
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="stock-entry-qty" min="1" required="" value="1" class="w-full border border-slate-300 rounded-lg p-2 font-bold text-emerald-700 text-base focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-semibold uppercase">Unidades</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        4. Actualizar Proveedor (Opcional)
+                    </label>
+                    <input type="text" id="stock-entry-supplier" placeholder="Dejar vacío para mantener el actual" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeStockEntryModal()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-all">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg font-bold shadow-md transition-all duration-200 transform hover:scale-105 flex items-center space-x-1">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <span>Ingresar Stock</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT CONSUMABLE -->
+    <div id="consumable-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden my-6 border border-slate-200">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <h3 id="consumable-modal-title" class="font-bold text-base">Agregar Consumible</h3>
+                <button onclick="closeConsumableModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="consumable-form" onsubmit="saveConsumable(event)" class="p-5 space-y-3.5 text-xs sm:text-sm">
+                <input type="hidden" id="consumable-id" value="">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="relative">
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre / Código *</label>
+                        <input type="text" id="consumable-name" list="existing-consumables-list" oninput="onConsumableNameInput(this.value)" required="" placeholder="Ej: Filtro LF-9009" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none" autocomplete="off">
+                        <datalist id="existing-consumables-list"></datalist>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Proveedor / Marca *</label>
+                        <input type="text" id="consumable-supplier" required="" placeholder="Ej: Mann-Filter" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Tipo / Categoría *</label>
+                        <select id="consumable-type" required="" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <option value="Filtro de Aceite">Filtro de Aceite</option>
+                            <option value="Filtro de Aire">Filtro de Aire</option>
+                            <option value="Filtro Coalescente">Filtro Coalescente</option>
+                            <option value="Filtro Separador">Filtro Separador</option>
+                            <option value="Aceite / Lubricante">Aceite / Lubricante</option>
+                            <option value="Correa">Correa</option>
+                            <option value="Empaque / Sello">Empaque / Sello</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Ubicación / Estante</label>
+                        <input type="text" id="consumable-location" placeholder="Ej: Estante B-3" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Stock Actual *</label>
+                        <input type="number" id="consumable-stock" min="0" required="" value="0" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Stock Mínimo (Alerta) *</label>
+                        <input type="number" id="consumable-min-stock" min="0" required="" value="2" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Equipos Compatibles (Asignación)</label>
+                    <div id="consumable-equipments-checkboxes" class="max-h-32 overflow-y-auto border border-slate-300 rounded-lg p-2 bg-slate-50 space-y-1"></div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Notas / Especificaciones</label>
+                    <textarea id="consumable-notes" rows="2" placeholder="Observaciones adicionales..." class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeConsumableModal()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-all">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white rounded-lg font-bold shadow-md transition-all duration-200 transform hover:scale-105">Guardar Repuesto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT EQUIPMENT -->
+    <div id="equipment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden my-6 border border-slate-200">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <h3 id="equipment-modal-title" class="font-bold text-base">Nuevo Equipo</h3>
+                <button onclick="closeEquipmentModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="equipment-form" onsubmit="saveEquipment(event)" class="p-5 space-y-3.5 text-xs sm:text-sm">
+                <input type="hidden" id="equipment-id">
+                
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre / Modelo del Equipo *</label>
+                    <input type="text" id="equipment-name" required="" placeholder="Ej: Compresor GA 37" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Marca *</label>
+                        <input type="text" id="equipment-brand" required="" placeholder="Ej: Atlas Copco" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Categoría</label>
+                        <input type="text" id="equipment-category" placeholder="Ej: Compresores" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Descripción / Serie / Ubicación</label>
+                    <textarea id="equipment-desc" rows="3" placeholder="Sala principal..." class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeEquipmentModal()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-all">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-lg font-bold shadow-md transition-all duration-200 transform hover:scale-105">Guardar Equipo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC & FIREBASE INTEGRATION -->
+    <script>
+        // CONFIGURACIÓN DE FIREBASE (Proyecto: panol-1477)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUhiHz-BqW0VBuhiy5L8Ih76Vc5Sd3Xc",
+            authDomain: "panol-1477.firebaseapp.com",
+            databaseURL: "https://panol-1477-default-rtdb.firebaseio.com",
+            projectId: "panol-1477",
+            storageBucket: "panol-1477.firebasestorage.app",
+            messagingSenderId: "900539645718",
+            appId: "1:900539645718:web:df3c8e4c6ddc0e17c81a37"
+        };
+
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // DEFAULT DEMO DATA
+        const DEFAULT_EQUIPMENTS = [
+            { id: "eq_1", name: "ASK 40", brand: "KAESER", category: "COMPRESOR", description: "Compresor de tornillo principal." },
+            { id: "eq_2", name: "ASK 35", brand: "KAESER", category: "COMPRESOR", description: "Compresor auxiliar." },
+            { id: "eq_3", name: "SK 19", brand: "KAESER", category: "COMPRESOR", description: "Compresor secundario." }
+        ];
+
+        const DEFAULT_CONSUMABLES = [
+            { id: "cs_1", name: "W940/37", supplier: "MANN", type: "Filtro de Aceite", stock: 0, minStock: 2, location: "", notes: "", compatibleEquipmentIds: ["eq_1"] },
+            { id: "cs_2", name: "6.3463.0", supplier: "TRC", type: "Filtro de Aceite", stock: 0, minStock: 2, location: "TGR", notes: "", compatibleEquipmentIds: ["eq_1"] }
+        ];
+
+        // GLOBAL APPLICATION STATE
+        let equipments = [];
+        let consumables = [];
+        let activeTab = 'search';
+        let searchMode = 'equipment';
+
+        // MIGRATION & DATA NORMALIZATION HELPER
+        function normalizeConsumables(items) {
+            if (!Array.isArray(items)) return [];
+            return items.map(cs => {
+                if (
+                    !cs.type ||
+                    cs.type === "Filtro de Combustible" || 
+                    cs.type === "Filtro Trampa de Agua / Sep. de Combustible" || 
+                    cs.type === "Filtro de Combustible (Diésel/Nafta)"
+                ) {
+                    return { ...cs, type: "Filtro Separador" };
+                }
+                return cs;
+            });
+        }
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadState();
+            populateEquipmentDropdown();
+            performSmartSearch();
+            updateLowStockBadge();
+        });
+
+        // CLOUD STORAGE MANAGEMENT (FIRESTORE REALTIME SYNC)
+        async function loadState() {
+            try {
+                showToast("Conectando con la nube...", "info");
+                
+                // Escuchar cambios en tiempo real desde Firestore
+                db.collection("panol").doc("stock_general")
+                    .onSnapshot((doc) => {
+                        if (doc.exists && doc.data()) {
+                            const data = doc.data();
+                            equipments = data.equipments || [...DEFAULT_EQUIPMENTS];
+                            const rawConsumables = data.consumables || [...DEFAULT_CONSUMABLES];
+                            consumables = normalizeConsumables(rawConsumables);
+                            
+                            // Guardar respaldo local
+                            localStorage.setItem('panol_equipments', JSON.stringify(equipments));
+                            localStorage.setItem('panol_consumables', JSON.stringify(consumables));
+                            
+                            // Refrescar la vista actual
+                            populateEquipmentDropdown();
+                            if (activeTab === 'search') performSmartSearch();
+                            else if (activeTab === 'consumables') renderConsumablesTable();
+                            else if (activeTab === 'equipments') renderEquipmentsGrid();
+                            updateLowStockBadge();
+                        } else {
+                            // Si no existe, crear documento inicial
+                            equipments = [...DEFAULT_EQUIPMENTS];
+                            consumables = [...DEFAULT_CONSUMABLES];
+                            saveStateToFirebase();
+                        }
+                        showToast("Sincronizado en tiempo real", "success");
+                    }, (error) => {
+                        console.error("Error en conexión tiempo real:", error);
+                        loadLocalStateFallback();
+                    });
+
+            } catch (e) {
+                console.error("Error al iniciar Firebase, usando respaldo local:", e);
+                loadLocalStateFallback();
+            }
+        }
+
+        function loadLocalStateFallback() {
+            const storedEq = localStorage.getItem('panol_equipments');
+            const storedCs = localStorage.getItem('panol_consumables');
+            equipments = storedEq ? JSON.parse(storedEq) : [...DEFAULT_EQUIPMENTS];
+            const rawConsumables = storedCs ? JSON.parse(storedCs) : [...DEFAULT_CONSUMABLES];
+            consumables = normalizeConsumables(rawConsumables);
+            showToast("Modo offline: usando memoria local", "warning");
+        }
+
+        async function saveStateToFirebase() {
+            try {
+                await db.collection("panol").doc("stock_general").set({
+                    equipments: equipments,
+                    consumables: consumables,
+                    updatedAt: new Date().toISOString()
+                });
+            } catch (error) {
+                console.error("Error al guardar en Firebase:", error);
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('panol_equipments', JSON.stringify(equipments));
+            localStorage.setItem('panol_consumables', JSON.stringify(consumables));
+            saveStateToFirebase();
+            updateLowStockBadge();
+        }
+
+        async function resetToDefaultData() {
+            if (confirm("¿Estás seguro de restablecer todos los datos a la versión de prueba predeterminada?")) {
+                equipments = [...DEFAULT_EQUIPMENTS];
+                consumables = [...DEFAULT_CONSUMABLES];
+                await saveStateToFirebase();
+                saveState();
+                populateEquipmentDropdown();
+                renderConsumablesTable();
+                renderEquipmentsGrid();
+                performSmartSearch();
+                showToast("Datos restablecidos con éxito", "info");
+            }
+        }
+
+        // NAVIGATION TABS
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-brand-600', 'text-brand-600');
+                btn.classList.add('border-transparent', 'text-slate-600');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}-btn`);
+            activeBtn.classList.remove('border-transparent', 'text-slate-600');
+            activeBtn.classList.add('border-brand-600', 'text-brand-600');
+
+            if (tabId === 'search') {
+                populateEquipmentDropdown();
+                performSmartSearch();
+            } else if (tabId === 'consumables') {
+                renderConsumablesTable();
+            } else if (tabId === 'equipments') {
+                renderEquipmentsGrid();
+            }
+        }
+
+        // SEARCH MODE & SMART LOOKUP LOGIC
+        function setSearchMode(mode) {
+            searchMode = mode;
+            const eqBtn = document.getElementById('mode-eq-btn');
+            const csBtn = document.getElementById('mode-cs-btn');
+            const eqContainer = document.getElementById('search-by-equipment-container');
+            const csContainer = document.getElementById('search-by-consumable-container');
+
+            if (mode === 'equipment') {
+                eqBtn.className = "flex-1 sm:flex-none px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow-sm transition";
+                csBtn.className = "flex-1 sm:flex-none px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition";
+                eqContainer.classList.remove('hidden');
+                csContainer.classList.add('hidden');
+                document.getElementById('selected-consumable-lookup-card').classList.add('hidden');
+            } else {
+                csBtn.className = "flex-1 sm:flex-none px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow-sm transition";
+                eqBtn.className = "flex-1 sm:flex-none px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition";
+                csContainer.classList.remove('hidden');
+                eqContainer.classList.add('hidden');
+                document.getElementById('selected-equipment-card').classList.add('hidden');
+            }
+            performSmartSearch();
+        }
+
+        function populateEquipmentDropdown() {
+            const select = document.getElementById('search-equipment-select');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">-- Todos los Equipos --</option>';
+            
+            const filterText = (document.getElementById('search-equipment-input')?.value || '').toLowerCase();
+
+            equipments.forEach(eq => {
+                const label = `${eq.name} (${eq.brand})`;
+                if (!filterText || label.toLowerCase().includes(filterText)) {
+                    const opt = document.createElement('option');
+                    opt.value = eq.id;
+                    opt.textContent = label;
+                    select.appendChild(opt);
+                }
+            });
+
+            if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        function filterEquipmentOptions() {
+            populateEquipmentDropdown();
+            performSmartSearch();
+        }
+
+        function resetSmartSearch() {
+            document.getElementById('search-equipment-input').value = '';
+            document.getElementById('search-equipment-select').value = '';
+            document.getElementById('search-consumable-type').value = '';
+            document.getElementById('search-consumable-text').value = '';
+            populateEquipmentDropdown();
+            performSmartSearch();
+        }
+
+        function performSmartSearch() {
+            const tbody = document.getElementById('smart-search-table-body');
+            const emptyState = document.getElementById('smart-search-empty');
+            const cardEq = document.getElementById('selected-equipment-card');
+            const cardCs = document.getElementById('selected-consumable-lookup-card');
+            
+            tbody.innerHTML = '';
+            let filtered = [];
+
+            if (searchMode === 'equipment') {
+                cardCs.classList.add('hidden');
+                const selectedEqId = document.getElementById('search-equipment-select').value;
+                
+                if (selectedEqId) {
+                    const eq = equipments.find(e => e.id === selectedEqId);
+                    if (eq) {
+                        document.getElementById('card-eq-name').textContent = eq.name;
+                        document.getElementById('card-eq-brand').textContent = eq.brand;
+                        document.getElementById('card-eq-category').textContent = eq.category || 'Equipo';
+                        document.getElementById('card-eq-desc').textContent = eq.description || '';
+                        cardEq.classList.remove('hidden');
+                    }
+                    filtered = consumables.filter(cs => cs.compatibleEquipmentIds && cs.compatibleEquipmentIds.includes(selectedEqId));
+                    document.getElementById('card-eq-count').textContent = filtered.length;
+                } else {
+                    cardEq.classList.add('hidden');
+                    filtered = [...consumables];
+                }
+            } else {
+                cardEq.classList.add('hidden');
+                const typeVal = document.getElementById('search-consumable-type').value;
+                const textVal = document.getElementById('search-consumable-text').value.toLowerCase().trim();
+
+                filtered = consumables.filter(cs => {
+                    const matchType = !typeVal || cs.type === typeVal;
+                    const matchText = !textVal || 
+                        cs.name.toLowerCase().includes(textVal) || 
+                        (cs.supplier && cs.supplier.toLowerCase().includes(textVal)) ||
+                        (cs.notes && cs.notes.toLowerCase().includes(textVal));
+                    return matchType && matchText;
+                });
+
+                if (filtered.length === 1 && (typeVal || textVal)) {
+                    const singleCs = filtered[0];
+                    document.getElementById('lookup-cs-name').textContent = singleCs.name;
+                    document.getElementById('lookup-cs-type').textContent = singleCs.type;
+                    document.getElementById('lookup-cs-supplier').textContent = singleCs.supplier || 'Sin proveedor';
+                    document.getElementById('lookup-cs-stock').textContent = `Stock Actual: ${singleCs.stock} unidades`;
+                    
+                    const listEl = document.getElementById('lookup-cs-equipments-list');
+                    listEl.innerHTML = '';
+                    const compEqs = equipments.filter(eq => singleCs.compatibleEquipmentIds?.includes(eq.id));
+                    if (compEqs.length > 0) {
+                        compEqs.forEach(eq => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<i class="fa-solid fa-angle-right text-brand-400 mr-1"></i> ${eq.name} (${eq.brand})`;
+                            listEl.appendChild(li);
+                        });
+                    } else {
+                        listEl.innerHTML = '<li class="text-slate-400 italic">No tiene equipos asignados</li>';
+                    }
+                    cardCs.classList.remove('hidden');
+                } else {
+                    cardCs.classList.add('hidden');
+                }
+            }
+
+            document.getElementById('search-results-count').textContent = `${filtered.length} ítems`;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            filtered.forEach(cs => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                
+                const isLow = cs.stock <= cs.minStock;
+                const statusBadge = isLow 
+                    ? `<span class="bg-rose-100 text-rose-800 font-bold text-[11px] px-2 py-0.5 rounded-full border border-rose-200 flex items-center w-fit space-x-1"><i class="fa-solid fa-triangle-exclamation"></i><span>Bajo Stock</span></span>`
+                    : `<span class="bg-emerald-100 text-emerald-800 font-semibold text-[11px] px-2 py-0.5 rounded-full border border-emerald-200">Normal</span>`;
+
+                const compatibleNames = (cs.compatibleEquipmentIds || [])
+                    .map(id => equipments.find(e => e.id === id)?.name)
+                    .filter(Boolean)
+                    .join(', ') || 'Sin asignar';
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="checkbox" class="smart-item-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4" data-id="${cs.id}">
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-bold text-slate-800">${escapeHTML(cs.name)}</div>
+                        <div class="text-[11px] text-slate-400">${escapeHTML(cs.location || 'Sin ubicación')} ${cs.notes ? '| ' + escapeHTML(cs.notes) : ''}</div>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-700 font-semibold">
+                        <span class="bg-slate-100 px-2 py-0.5 rounded text-xs border border-slate-200">${escapeHTML(cs.supplier || 'Sin especificar')}</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-600 font-medium">${escapeHTML(cs.type)}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="font-extrabold text-sm ${cs.stock === 0 ? 'text-rose-600' : isLow ? 'text-amber-600' : 'text-slate-800'}">${cs.stock}</span>
+                    </td>
+                    <td class="py-2.5 px-3">${statusBadge}</td>
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="number" min="1" max="${cs.stock}" value="1" id="deduct-qty-${cs.id}" class="w-16 text-center border border-slate-300 rounded-md py-1 text-xs font-semibold focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button onclick="showCompatibleEquipmentsModal('${cs.id}')" title="${escapeHTML(compatibleNames)}" class="text-slate-500 hover:text-brand-600 text-xs font-medium bg-slate-100 hover:bg-brand-50 px-2 py-1 rounded border border-slate-200 transition">
+                            <i class="fa-solid fa-eye mr-1"></i>${cs.compatibleEquipmentIds?.length || 0} Equipos
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleSelectAll(select) {
+            document.querySelectorAll('.smart-item-checkbox').forEach(cb => cb.checked = select);
+        }
+
+        function applyBatchStockDeduction() {
+            const checkboxes = document.querySelectorAll('.smart-item-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showToast("Seleccioná al menos un consumible para descontar stock.", "warning");
+                return;
+            }
+
+            let updatedCount = 0;
+            checkboxes.forEach(cb => {
+                const csId = cb.dataset.id;
+                const qtyInput = document.getElementById(`deduct-qty-${csId}`);
+                const deductQty = parseInt(qtyInput?.value || 1, 10);
+                
+                const cs = consumables.find(item => item.id === csId);
+                if (cs && deductQty > 0) {
+                    cs.stock = Math.max(0, cs.stock - deductQty);
+                    updatedCount++;
+                }
+            });
+
+            if (updatedCount > 0) {
+                saveState();
+                performSmartSearch();
+                showToast(`Se descontó stock de ${updatedCount} repuesto(s).`, "success");
+            }
+        }
+
+        // CONSUMABLES MANAGEMENT (CRUD)
+        function renderConsumablesTable() {
+            const tbody = document.getElementById('consumables-table-body');
+            const emptyState = document.getElementById('consumables-empty');
+            tbody.innerHTML = '';
+
+            const textFilter = document.getElementById('filter-consumable-text').value.toLowerCase();
+            const supplierFilter = (document.getElementById('filter-consumable-supplier')?.value || '').toLowerCase();
+            const typeFilter = document.getElementById('filter-consumable-type').value;
+            const stockFilter = document.getElementById('filter-consumable-stock').value;
+
+            const filtered = consumables.filter(cs => {
+                const matchText = !textFilter || cs.name.toLowerCase().includes(textFilter) || (cs.notes && cs.notes.toLowerCase().includes(textFilter));
+                const matchSupplier = !supplierFilter || (cs.supplier && cs.supplier.toLowerCase().includes(supplierFilter));
+                const matchType = !typeFilter || cs.type === typeFilter;
+                const isLow = cs.stock <= cs.minStock;
+                const matchStock = !stockFilter || (stockFilter === 'low' ? isLow : !isLow);
+                return matchText && matchSupplier && matchType && matchStock;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            filtered.forEach(cs => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
+
+                const isLow = cs.stock <= cs.minStock;
+                const statusBadge = isLow 
+                    ? `<span class="bg-rose-100 text-rose-800 font-bold text-[11px] px-2 py-0.5 rounded-full border border-rose-200"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Stock Bajo</span>`
+                    : `<span class="bg-emerald-100 text-emerald-800 font-semibold text-[11px] px-2 py-0.5 rounded-full border border-emerald-200">OK</span>`;
+
+                const compatibleList = (cs.compatibleEquipmentIds || [])
+                    .map(id => equipments.find(e => e.id === id)?.name)
+                    .filter(Boolean)
+                    .join(', ') || '<span class="text-slate-400 italic">Sin equipos</span>';
+
+                tr.innerHTML = `
+                    <td class="py-3 px-3">
+                        <div class="font-bold text-slate-900">${escapeHTML(cs.name)}</div>
+                        <div class="text-[11px] text-slate-400">${cs.location ? 'Ub: ' + escapeHTML(cs.location) : ''}</div>
+                    </td>
+                    <td class="py-3 px-3">
+                        <span class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded text-xs border border-slate-200">${escapeHTML(cs.supplier || 'N/A')}</span>
+                    </td>
+                    <td class="py-3 px-3 text-slate-600 font-medium">${escapeHTML(cs.type)}</td>
+                    <td class="py-3 px-3 text-xs text-slate-600">${compatibleList}</td>
+                    <td class="py-3 px-3 font-extrabold text-sm ${cs.stock <= cs.minStock ? 'text-rose-600' : 'text-slate-800'}">${cs.stock}</td>
+                    <td class="py-3 px-3 text-slate-500 font-medium">${cs.minStock}</td>
+                    <td class="py-3 px-3">${statusBadge}</td>
+                    <td class="py-3 px-3 text-right space-x-1">
+                        <button onclick="editConsumable('${cs.id}')" title="Editar" class="p-1.5 bg-slate-100 hover:bg-brand-50 text-brand-600 rounded transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteConsumable('${cs.id}')" title="Eliminar" class="p-1.5 bg-slate-100 hover:bg-rose-50 text-rose-600 rounded transition"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openConsumableModal(id = null) {
+            const modal = document.getElementById('consumable-modal');
+            const form = document.getElementById('consumable-form');
+            form.reset();
+            document.getElementById('consumable-id').value = id || '';
+            document.getElementById('consumable-modal-title').textContent = id ? 'Editar Consumible' : 'Agregar Consumible';
+
+            populateConsumablesDatalist();
+
+            const container = document.getElementById('consumable-equipments-checkboxes');
+            container.innerHTML = '';
+            
+            const targetCs = id ? consumables.find(c => c.id === id) : null;
+            const targetEqIds = targetCs ? (targetCs.compatibleEquipmentIds || []) : [];
+
+            equipments.forEach(eq => {
+                const isChecked = targetEqIds.includes(eq.id);
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-2 text-xs text-slate-700 cursor-pointer hover:bg-slate-100 p-1 rounded";
+                label.innerHTML = `
+                    <input type="checkbox" value="${eq.id}" ${isChecked ? 'checked' : ''} class="cs-eq-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span><strong>${escapeHTML(eq.name)}</strong> (${escapeHTML(eq.brand)})</span>
+                `;
+                container.appendChild(label);
+            });
+
+            if (targetCs) {
+                document.getElementById('consumable-name').value = targetCs.name;
+                document.getElementById('consumable-supplier').value = targetCs.supplier || '';
+                document.getElementById('consumable-type').value = targetCs.type;
+                document.getElementById('consumable-location').value = targetCs.location || '';
+                document.getElementById('consumable-stock').value = targetCs.stock;
+                document.getElementById('consumable-min-stock').value = targetCs.minStock;
+                document.getElementById('consumable-notes').value = targetCs.notes || '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function populateConsumablesDatalist() {
+            const datalist = document.getElementById('existing-consumables-list');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+            consumables.forEach(cs => {
+                const opt = document.createElement('option');
+                opt.value = cs.name;
+                opt.label = `${cs.supplier ? cs.supplier + ' - ' : ''}${cs.type} (Stock: ${cs.stock})`;
+                datalist.appendChild(opt);
+            });
+        }
+
+        function onConsumableNameInput(val) {
+            const currentId = document.getElementById('consumable-id').value;
+            if (currentId) return;
+
+            const matchedCs = consumables.find(c => c.name.toLowerCase() === val.trim().toLowerCase());
+            if (matchedCs) {
+                document.getElementById('consumable-supplier').value = matchedCs.supplier || '';
+                document.getElementById('consumable-type').value = matchedCs.type || 'Otro';
+                document.getElementById('consumable-location').value = matchedCs.location || '';
+                document.getElementById('consumable-stock').value = matchedCs.stock || 0;
+                document.getElementById('consumable-min-stock').value = matchedCs.minStock || 2;
+                document.getElementById('consumable-notes').value = matchedCs.notes || '';
+
+                const targetEqIds = matchedCs.compatibleEquipmentIds || [];
+                document.querySelectorAll('.cs-eq-checkbox').forEach(cb => {
+                    cb.checked = targetEqIds.includes(cb.value);
+                });
+
+                showToast(`Repuesto existente detectado. Se cargaron sus datos para actualizar.`, "info");
+            }
+        }
+
+        function closeConsumableModal() {
+            document.getElementById('consumable-modal').classList.add('hidden');
+        }
+
+        function saveConsumable(event) {
+            event.preventDefault();
+            const id = document.getElementById('consumable-id').value;
+            const name = document.getElementById('consumable-name').value.trim();
+            const supplier = document.getElementById('consumable-supplier').value.trim();
+            const type = document.getElementById('consumable-type').value;
+            const location = document.getElementById('consumable-location').value.trim();
+            const stock = parseInt(document.getElementById('consumable-stock').value, 10) || 0;
+            const minStock = parseInt(document.getElementById('consumable-min-stock').value, 10) || 0;
+            const notes = document.getElementById('consumable-notes').value.trim();
+
+            const selectedEqIds = Array.from(document.querySelectorAll('.cs-eq-checkbox:checked')).map(cb => cb.value);
+
+            if (id) {
+                const index = consumables.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    consumables[index] = { id, name, supplier, type, location, stock, minStock, notes, compatibleEquipmentIds: selectedEqIds };
+                    showToast("Consumible actualizado con éxito", "success");
+                }
+            } else {
+                const newId = 'cs_' + Date.now();
+                consumables.push({ id: newId, name, supplier, type, location, stock, minStock, notes, compatibleEquipmentIds: selectedEqIds });
+                showToast("Consumible creado con éxito", "success");
+            }
+
+            saveState();
+            closeConsumableModal();
+            renderConsumablesTable();
+            performSmartSearch();
+        }
+
+        function editConsumable(id) {
+            openConsumableModal(id);
+        }
+
+        function deleteConsumable(id) {
+            if (confirm("¿Estás seguro de eliminar este consumible del inventario?")) {
+                consumables = consumables.filter(c => c.id !== id);
+                saveState();
+                renderConsumablesTable();
+                performSmartSearch();
+                showToast("Consumible eliminado", "info");
+            }
+        }
+
+        // EQUIPMENTS MANAGEMENT (CRUD)
+        function renderEquipmentsGrid() {
+            const grid = document.getElementById('equipments-grid');
+            const emptyState = document.getElementById('equipments-empty');
+            grid.innerHTML = '';
+
+            if (equipments.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            equipments.forEach(eq => {
+                const countAssigned = consumables.filter(cs => cs.compatibleEquipmentIds?.includes(eq.id)).length;
+                
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-between space-y-3 hover:shadow-md transition";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="bg-brand-100 text-brand-800 text-[10px] font-bold uppercase px-2 py-0.5 rounded-md">${escapeHTML(eq.brand)}</span>
+                                <h3 class="font-bold text-slate-900 text-base mt-1">${escapeHTML(eq.name)}</h3>
+                            </div>
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">${escapeHTML(eq.category || 'General')}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-2">${escapeHTML(eq.description || 'Sin descripción adicional.')}</p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-500 font-medium">
+                            <i class="fa-solid fa-boxes-stacked text-brand-500 mr-1"></i>${countAssigned} Repuestos
+                        </span>
+                        <div class="space-x-1">
+                            <button onclick="openEquipmentModal('${eq.id}')" class="p-1.5 bg-slate-100 hover:bg-brand-50 text-brand-600 rounded text-xs transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteEquipment('${eq.id}')" class="p-1.5 bg-slate-100 hover:bg-rose-50 text-rose-600 rounded text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openEquipmentModal(id = null) {
+            const modal = document.getElementById('equipment-modal');
+            const form = document.getElementById('equipment-form');
+            form.reset();
+            document.getElementById('equipment-id').value = id || '';
+            document.getElementById('equipment-modal-title').textContent = id ? 'Editar Equipo' : 'Nuevo Equipo';
+
+            if (id) {
+                const eq = equipments.find(e => e.id === id);
+                if (eq) {
+                    document.getElementById('equipment-name').value = eq.name;
+                    document.getElementById('equipment-brand').value = eq.brand;
+                    document.getElementById('equipment-category').value = eq.category || '';
+                    document.getElementById('equipment-desc').value = eq.description || '';
+                }
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeEquipmentModal() {
+            document.getElementById('equipment-modal').classList.add('hidden');
+        }
+
+        function saveEquipment(event) {
+            event.preventDefault();
+            const id = document.getElementById('equipment-id').value;
+            const name = document.getElementById('equipment-name').value.trim();
+            const brand = document.getElementById('equipment-brand').value.trim();
+            const category = document.getElementById('equipment-category').value.trim();
+            const description = document.getElementById('equipment-desc').value.trim();
+
+            if (id) {
+                const index = equipments.findIndex(e => e.id === id);
+                if (index !== -1) {
+                    equipments[index] = { id, name, brand, category, description };
+                    showToast("Equipo actualizado correctamente", "success");
+                }
+            } else {
+                const newId = 'eq_' + Date.now();
+                equipments.push({ id: newId, name, brand, category, description });
+                showToast("Equipo registrado correctamente", "success");
+            }
+
+            saveState();
+            closeEquipmentModal();
+            renderEquipmentsGrid();
+            populateEquipmentDropdown();
+        }
+
+        function deleteEquipment(id) {
+            if (confirm("¿Eliminar este equipo? Se desvinculará de los repuestos asociados.")) {
+                equipments = equipments.filter(e => e.id !== id);
+                consumables.forEach(cs => {
+                    if (cs.compatibleEquipmentIds) {
+                        cs.compatibleEquipmentIds = cs.compatibleEquipmentIds.filter(eId => eId !== id);
+                    }
+                });
+                saveState();
+                renderEquipmentsGrid();
+                populateEquipmentDropdown();
+                performSmartSearch();
+                showToast("Equipo eliminado", "info");
+            }
+        }
+
+        // STOCK ENTRY ASSISTANT MODAL
+        function openStockEntryModal() {
+            const modal = document.getElementById('stock-entry-modal');
+            document.getElementById('stock-entry-search-input').value = '';
+            document.getElementById('stock-entry-type-filter').value = '';
+            document.getElementById('stock-entry-qty').value = 1;
+            document.getElementById('stock-entry-supplier').value = '';
+            filterStockEntryDropdown();
+            modal.classList.remove('hidden');
+        }
+
+        function closeStockEntryModal() {
+            document.getElementById('stock-entry-modal').classList.add('hidden');
+        }
+
+        function filterStockEntryDropdown() {
+            const typeFilter = document.getElementById('stock-entry-type-filter').value;
+            const searchText = document.getElementById('stock-entry-search-input').value.toLowerCase().trim();
+            const select = document.getElementById('stock-entry-item-select');
+            select.innerHTML = '';
+
+            const filtered = consumables.filter(cs => {
+                const matchType = !typeFilter || cs.type === typeFilter;
+                const matchText = !searchText || 
+                    cs.name.toLowerCase().includes(searchText) || 
+                    (cs.supplier && cs.supplier.toLowerCase().includes(searchText)) ||
+                    (cs.notes && cs.notes.toLowerCase().includes(searchText));
+                return matchType && matchText;
+            });
+
+            filtered.forEach((cs, idx) => {
+                const opt = document.createElement('option');
+                opt.value = cs.id;
+                opt.textContent = `${cs.name} [${cs.supplier || 'Sin prov.'}] (Stock Actual: ${cs.stock})`;
+                if (idx === 0) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            if (filtered.length === 0) {
+                const opt = document.createElement('option');
+                opt.disabled = true;
+                opt.textContent = "-- Sin repuestos coincidentes --";
+                select.appendChild(opt);
+            }
+        }
+
+        function submitStockEntry(event) {
+            event.preventDefault();
+            const csId = document.getElementById('stock-entry-item-select').value;
+            const addQty = parseInt(document.getElementById('stock-entry-qty').value, 10);
+            const newSupplier = document.getElementById('stock-entry-supplier').value.trim();
+
+            if (!csId) {
+                showToast("Seleccioná un repuesto válido.", "warning");
+                return;
+            }
+
+            const cs = consumables.find(c => c.id === csId);
+            if (cs && addQty > 0) {
+                cs.stock += addQty;
+                if (newSupplier) {
+                    cs.supplier = newSupplier;
+                }
+                saveState();
+                closeStockEntryModal();
+                performSmartSearch();
+                renderConsumablesTable();
+                showToast(`Se agregaron ${addQty} unidad(es) a ${cs.name}`, "success");
+            }
+        }
+
+        // HELPERS & BADGES
+        function updateLowStockBadge() {
+            const count = consumables.filter(c => c.stock <= c.minStock).length;
+            const badge = document.getElementById('low-stock-badge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function showCompatibleEquipmentsModal(csId) {
+            const cs = consumables.find(c => c.id === csId);
+            if (!cs) return;
+
+            const compEqs = equipments.filter(eq => cs.compatibleEquipmentIds?.includes(eq.id));
+            const names = compEqs.map(e => `• ${e.name} (${e.brand})`).join('\n');
+
+            alert(`Equipos compatibles con: ${cs.name}\nProveedor: ${cs.supplier || 'No especificado'}\n\n${names || 'Ningún equipo asignado.'}`);
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgClass = type === 'success' ? 'bg-emerald-800 text-white' : type === 'warning' ? 'bg-amber-700 text-white' : 'bg-slate-900 text-white';
+            const icon = type === 'success' ? 'fa-circle-check text-emerald-400' : type === 'warning' ? 'fa-triangle-exclamation text-amber-400' : 'fa-info-circle text-sky-400';
+
+            toast.className = `flex items-center space-x-2 px-4 py-3 rounded-lg shadow-xl text-xs font-semibold ${bgClass} transition duration-300 transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${escapeHTML(message)}</span>`;
+
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // DATA EXPORT / IMPORT LOGIC
+        function exportJSONBackup() {
+            const data = {
+                version: "1.2",
+                exportedAt: new Date().toISOString(),
+                equipments,
+                consumables
+            };
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PanolMaster_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Respaldo JSON descargado", "success");
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (Array.isArray(parsed.equipments) && Array.isArray(parsed.consumables)) {
+                        equipments = parsed.equipments;
+                        consumables = normalizeConsumables(parsed.consumables);
+                        saveState();
+                        populateEquipmentDropdown();
+                        performSmartSearch();
+                        renderConsumablesTable();
+                        renderEquipmentsGrid();
+                        showToast("Datos restaurados y subidos a Firebase", "success");
+                    } else {
+                        showToast("El archivo JSON no tiene la estructura válida.", "warning");
+                    }
+                } catch (err) {
+                    showToast("Error al leer el archivo JSON.", "warning");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportCSVReport() {
+            let csv = "\uFEFF";
+            csv += "Código/Nombre,Proveedor,Tipo,Stock Actual,Stock Mínimo,Estado,Ubicación,Notas,Equipos Compatibles\n";
+
+            consumables.forEach(cs => {
+                const compNames = (cs.compatibleEquipmentIds || [])
+                    .map(id => equipments.find(e => e.id === id)?.name)
+                    .filter(Boolean)
+                    .join(' | ');
+
+                const isLow = cs.stock <= cs.minStock ? 'BAJO STOCK' : 'OK';
+                
+                csv += `"${(cs.name || '').replace(/"/g, '""')}","${(cs.supplier || '').replace(/"/g, '""')}","${cs.type}",${cs.stock},${cs.minStock},"${isLow}","${(cs.location || '').replace(/"/g, '""')}","${(cs.notes || '').replace(/"/g, '""')}","${compNames.replace(/"/g, '""')}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Inventario_Panol_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Reporte CSV generado para Excel", "success");
+        }
+
+        function downloadStandaloneHTML() {
+            const fullDoc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([fullDoc], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Panol_Control_Pro_App.html";
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Aplicación HTML descargada.", "success");
+        }
+    </script>
+
+</body></html>
